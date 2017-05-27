@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -118,3 +120,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEZAME_CONF = {
+    'SHARED_DIR_PATH': '/mnt/iscsi/',
+    'SHARED_MEZAME_PATH': 'mezame/',
+}
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
