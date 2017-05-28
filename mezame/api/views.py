@@ -1,4 +1,5 @@
 from os import path
+import shutil
 
 from django.conf import settings
 from django.http import Http404
@@ -137,8 +138,29 @@ class ImagePath(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def put(self, request: Request, image_id: str, format=None):
-        """
-        Unimplemented
-        """
-        data = {'message': 'NOT IMPLEMENTED'}
-        return Response(data=data, status=status.HTTP_501_NOT_IMPLEMENTED)
+        src_path = request.data.get('src_path', None)
+
+        if src_path is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        image = self.get_object(image_id)
+
+        if image.status == str(Image.STATUS_ACTIVE):
+            return Response(status=status.HTTP_409_CONFLICT)
+
+        if image.status == str(Image.STATUS_DEACTIVATED):
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        if image.status == str(Image.STATUS_INACTIVE):
+            # ToDo: directory traversal 対策
+            shutil.copy(
+                path.join(settings.MEZAME_CONF['SHARED_DIR_PATH'], src_path),
+                path.join(MEZAME_PATH, image_id)
+            )
+
+            image.status = Image.STATUS_ACTIVE
+            image.save()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
