@@ -121,10 +121,20 @@ class ImageFile(APIView):
 
 
 class ImagePath(APIView):
+    def get_object(self, image_id: str):
+        try:
+            return Image.objects.get(id=image_id)
+        except Image.DoesNotExist:
+            raise Http404
+
     def get(self, request: Request, image_id: str, format=None):
-        # ToDo: imageがactive以外の時に弾く
-        data = {'path': path.join(MEZAME_PATH, image_id)}
-        return Response(data=data, status=status.HTTP_200_OK)
+        image = self.get_object(image_id)
+
+        if image.status == str(Image.STATUS_ACTIVE):
+            data = {'path': path.join(MEZAME_PATH, image_id)}
+            return Response(data=data, status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def put(self, request: Request, image_id: str, format=None):
         """
