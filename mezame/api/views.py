@@ -97,28 +97,35 @@ class ImageFile(APIView):
     def put(self, request: Request, image_id: str, format=None):
         image = self.get_object(image_id)
 
-        if image.status != str(Image.STATUS_INACTIVE):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        if image.status == str(Image.STATUS_ACTIVE):
+            return Response(status=status.HTTP_409_CONFLICT)
 
-        # ToDo: PUTされたファイルの拡張子を確認し、disk_formatを変更
-        # ToDo: POST /image 時に指定されたフォーマット以外を弾く
-        # if image.disk_format is not None && [disk_formatと違っていたらFalse]:
-        #     return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+        if image.status == str(Image.STATUS_DEACTIVATED):
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
-        # file_obj: UploadedFile
-        file_obj = request.data['file']
+        if image.status == str(Image.STATUS_INACTIVE):
 
-        with open(path.join(MEZAME_PATH, image_id), 'wb+') as f:
-            if file_obj.multiple_chunks():
-                for chunk in file_obj.chunks():
-                    f.write(chunk)
-            else:
-                f.write(file_obj.read())
+            # ToDo: PUTされたファイルの拡張子を確認し、disk_formatを変更
+            # ToDo: POST /image 時に指定されたフォーマット以外を弾く
+            # if image.disk_format is not None && [disk_formatと違っていたらFalse]:
+            #     return Response(status=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
-        image.status = Image.STATUS_ACTIVE
-        image.save()
+            # file_obj: UploadedFile
+            file_obj = request.data['file']
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            with open(path.join(MEZAME_PATH, image_id), 'wb+') as f:
+                if file_obj.multiple_chunks():
+                    for chunk in file_obj.chunks():
+                        f.write(chunk)
+                else:
+                    f.write(file_obj.read())
+
+            image.status = Image.STATUS_ACTIVE
+            image.save()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class ImagePath(APIView):
