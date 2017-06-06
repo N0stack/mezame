@@ -27,7 +27,7 @@ class Image(models.Model):
     min_disk_byte = models.BigIntegerField(default=0) # Unimplemented
     min_ram_byte = models.BigIntegerField(default=0) # Unimplemented
     checksum = models.TextField(blank=True) # Unimplemented
-    created_at = models.DateTimeField(auto_now=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     deleted_at = models.DateTimeField(default=None, null=True) # Unimplemented
     deleted = models.BooleanField(default=False) # Unimplemented
