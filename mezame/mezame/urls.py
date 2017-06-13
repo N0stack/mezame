@@ -15,12 +15,19 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.conf.urls import include
+from django.conf import settings
 from django.contrib import admin
+from rest_framework_swagger.views import get_swagger_view
 
-from api import urls as api_urls
+from v1 import urls as api_urls
 
+
+schema_view = get_swagger_view(title='mezame API')
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api/v1/', include(api_urls.urlpatterns)),
+    url(r'^v1/', include(api_urls.urlpatterns)),
 ]
+
+if settings.LOCAL_DEV:
+    urlpatterns.append(url(r'^swagger/', schema_view))
