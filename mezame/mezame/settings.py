@@ -137,6 +137,8 @@ MEZAME_CONF = {
     'SHARED_MEZAME_PATH': 'mezame/',
 }
 
+MEZAME_PATH = os.path.join(MEZAME_CONF['SHARED_DIR_PATH'], MEZAME_CONF['SHARED_MEZAME_PATH'])
+
 try:
     from local_settings import *
 except ImportError:

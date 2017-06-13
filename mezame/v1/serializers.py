@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from .models import Image
+from .models import Agent
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -21,3 +22,19 @@ class ImageSerializer(serializers.ModelSerializer):
             'deleted_at',
             'deleted',
         )
+        read_only_fields = ('id',)
+
+
+class AgentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Agent
+        fields = (
+            'id',
+            'name',
+            'status',
+            'host',
+            'images',
+        )
+        read_only_fields = ('id',)
+        depth = 1
+
