@@ -14,21 +14,13 @@ from rest_framework.views import Response
 from rest_framework.parsers import FileUploadParser
 
 from .models import Image
-from .models import Agent
 from .serializers import ImageSerializer
-from .serializers import AgentSerializer
 
 
 class ImageViewSet(viewsets.ModelViewSet):
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
     filter_fields = ('status', 'disk_format')
-
-
-class AgentViewSet(viewsets.ModelViewSet):
-    queryset = Agent.objects.all()
-    serializer_class = AgentSerializer
-    filter_fields = ('status',)
 
 
 class ImageFile(APIView):
